@@ -45,6 +45,24 @@
                     label_html: {
                                   class: "text-white font-outfit"
                                 } %>
+          <%= f.input :soundcloud_link,
+                    required: true,
+                    wrapper_html: {class: "w-full"},
+                    input_html: { autocomplete: "soundcloud_link",
+                                  class: "border border-slate-600 rounded-md p-2 flex flex-col gap-2 w-full focus:border-primary focus:outline-none",
+                                },
+                    label_html: {
+                                  class: "text-white font-outfit"
+                                } %>
+          <%= f.input :bio,
+                    required: true,
+                    wrapper_html: {class: "w-full"},
+                    input_html: { autocomplete: "bio",
+                                  class: "border border-slate-600 rounded-md p-2 flex flex-col gap-2 w-full focus:border-primary focus:outline-none",
+                                },
+                    label_html: {
+                                  class: "text-white font-outfit"
+                                } %>
           <%= f.input :profile_picture,
                     required: true,
                     wrapper_html: {class: "w-full p-4 text-yelloww"},

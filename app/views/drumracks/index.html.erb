@@ -19,12 +19,12 @@
       <%= form_with url: drumracks_path, method: :get, class: "w-full sm:w-auto" do %>
       <div class="flex gap-1 items-center w-full sm:w-auto">
         <%= text_field_tag :query,
-              params[:query],
-              class: "mt-2 h-12 px-4 py-2 rounded border-2 border-yelloww font-gillSans shadow-md w-full sm:w-72" ,
-              placeholder: "Search genre or user..."
+            params[:query],
+            class: "mt-2 h-12 px-4 py-2 rounded border-2 border-yelloww font-gillSans shadow-md w-full sm:w-72",
+            placeholder: "Search genre or user..."
         %>
         <%= submit_tag "Search", name: "",
-              class: "mt-2 h-12 bg-yelloww font-semibold hover:bg-blackk hover:text-yelloww text-lg text-blackk px-4 py-2 rounded font-outfit shadow-md w-full sm:w-auto sm:h-full sm:px-6 sm:py-2 transition-colors duration-300 border-2 border-yelloww"
+            class: "mt-2 h-12 bg-yelloww font-semibold hover:bg-blackk hover:text-yelloww text-lg text-blackk px-4 py-2 rounded font-outfit shadow-md w-full sm:w-auto sm:h-full sm:px-6 sm:py-2 transition-colors duration-300 border-2 border-yelloww"
         %>
       </div>
       <% end %>
