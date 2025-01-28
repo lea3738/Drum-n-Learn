@@ -38,7 +38,9 @@
         </p>
       <% end %>
 
-      <p class="text-white text-md relative z-10 text-center">by <%= drumrack.user&.username %></p>
+      <%= link_to user_path(drumrack.user), class: "text-white text-md relative z-10 text-center" do %>
+        by <%= drumrack.user&.username %>
+      <% end %>
     </div>
   </div>
 
