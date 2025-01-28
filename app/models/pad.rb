@@ -4,15 +4,15 @@ class Pad < ApplicationRecord
   has_many :drumrack_samples, through: :pad_drumrack_samples
   has_many :samples, through: :drumrack_samples
 
-validate :make_sure_pad_has_5_drumrack_samples
-validates :step, presence: true, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 16 }
+  validate :make_sure_pad_has_5_drumrack_samples
+  validates :step, presence: true, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 16 }
 
-private
+  private
 
-def make_sure_pad_has_5_drumrack_samples
-  if drumrack_samples.size > 5
-    errors.add(:base, "must have 5 drumrack samples")
+  def make_sure_pad_has_5_drumrack_samples
+    if drumrack_samples.size > 5
+      errors.add(:base, "must have 5 drumrack samples")
+    end
   end
-end
 
 end

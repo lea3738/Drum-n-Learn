@@ -1,9 +1,9 @@
 require 'json'
 
 class DrumracksController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show, :templates]
+  skip_before_action :authenticate_user!, only: %i[index show templates]
   skip_before_action :verify_authenticity_token
-  before_action :set_drumrack, only: [:show, :soundbox, :update, :duplicate]
+  before_action :set_drumrack, only: %i[show soundbox update duplicate]
 
   def index
     @templates = Drumrack.where(is_template: true)

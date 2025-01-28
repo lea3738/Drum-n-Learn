@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-skip_before_action :authenticate_user!, only: [:index, :show]
-before_action :set_user, only: [:show]
+  skip_before_action :authenticate_user!, only: %i[index show]
+  before_action :set_user, only: [:show]
 
   def show
     @likes = @user.likes
@@ -19,6 +19,12 @@ before_action :set_user, only: [:show]
   end
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :profile_picture, :soundcloud_link, :bio)
+    params.require(:user).permit(:username,
+                                 :email,
+                                 :password,
+                                 :password_confirmation,
+                                 :profile_picture,
+                                 :soundcloud_link,
+                                 :bio)
   end
 end

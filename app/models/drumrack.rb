@@ -34,5 +34,4 @@ class Drumrack < ApplicationRecord
       pad.save
     end
   end
-
 end
