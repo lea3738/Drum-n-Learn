@@ -7,7 +7,8 @@ export default class extends Controller {
 
   }
 
-  search(){
-    console.log("keyup action completed");
+  search(event){
+    const searchInput = event.target.value;
+    console.log("keyup action completed", searchInput);
   }
 }
