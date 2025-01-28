@@ -14,5 +14,4 @@ class Pad < ApplicationRecord
       errors.add(:base, "must have 5 drumrack samples")
     end
   end
-
 end
