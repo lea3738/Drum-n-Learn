@@ -7,6 +7,7 @@ class DrumracksController < ApplicationController
 
   def index
     @templates = Drumrack.where(is_template: true)
+
     @drumracks = Drumrack.joins(:user)
                          .where(is_template: false)
 
@@ -19,7 +20,11 @@ class DrumracksController < ApplicationController
       @drumracks = @drumracks.where(sql_subquery, query: "%#{params[:query]}%")
     end
 
-    @drumracks = @drumracks.sort_by { |drumrack| drumrack.likes.count }.reverse
+    # sort by number of likes and add pagination
+    @drumracks = @drumracks.left_joins(:likes)
+                           .group('drumracks.id')
+                           .order('COUNT(likes.id) DESC')
+                           .paginate(page: params[:page], per_page: 10)
   end
 
   def after_sign_up_path_for(resource)

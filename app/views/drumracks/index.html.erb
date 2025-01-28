@@ -33,8 +33,16 @@
       </div>
 
     </div>
-    <%= render "shared/community", drumracks: @drumracks %>
-      <%= render "shared/footer" %>
+    <div class="flex flex-col items-center gap-4">
+      <%= render "shared/community", drumracks: @drumracks %>
+
+      <div class="mt-6">
+        <span class="text-xl font-outfit text-white my-4">
+          <%= will_paginate @posts %>
+        </span>
+      </div>
+    </div>
+    <%= render "shared/footer" %>
   </div>
 </div>
 
