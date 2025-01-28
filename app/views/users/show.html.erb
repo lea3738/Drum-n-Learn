@@ -1,25 +1,44 @@
 <% content_for :title, "User profile" %>
-<div class="ml-4 mt-6 mr-4 flex flex-col justify-between justify-center">
+<div class="ml-4 mt-6 mr-4 flex flex-col content-center">
   <div class="flex flex-col mr-8 mb-8">
-    <%= link_to root_path, class: "mb-4 bg-yelloww w-32 font-outfit font-semibold text-center rounded-md w-1/2 p-2 hover:bg-blackk hover:text-yelloww transform border-2 border-yelloww transition-transform duration-200 cursor-pointer inline-flex items-center justify-center" do %>
+    <div class="flex justify-between">
+      <%= link_to root_path, class: "mb-4 bg-yelloww w-32 font-outfit font-semibold text-center rounded-md w-1/2 p-2 hover:bg-blackk hover:text-yelloww transform border-2 border-yelloww transition-transform duration-200 cursor-pointer inline-flex items-center justify-center" do %>
   <!-- Left Arrow Icon (Font Awesome) -->
-    <i class="fas fa-arrow-left mr-2"></i>
-    Homepage
-    <% end %>
+      <i class="fas fa-arrow-left mr-2"></i>
+      Homepage
+      <% end %>
+      <% if @user == @current_user %>
+        <div>
+          <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete }, class: "bg-yelloww w-1/6 font-outfit font-semibold text-center rounded-md w-1/2 p-2 hover:bg-blackk hover:text-yelloww transform border-2 border-yelloww transition-transform duration-200 cursor-pointer" %>
+          <%= link_to "Edit", edit_user_registration_path, class: "bg-yelloww w-1/6 font-outfit font-semibold text-center rounded-md w-1/2 p-2 hover:bg-blackk hover:text-yelloww transform border-2 border-yelloww transition-transform duration-200 cursor-pointer" %>
+        </div>
+      <% end %>
 
-    <h2 class="text-5xl font-bold flex flex-col items-center font-outfit text-white"><%= @current_user.username %>'s profile</h2>
+    </div>
+
     <div class="flex flex-col mt-4 items-center justify-center gap-4">
 
       <%= cl_image_tag @user.profile_picture.key, class: "w-40 h-40 rounded-full object-cover border-2 border-yelloww" %>
 
-      <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete }, class: "bg-yelloww w-1/6 font-outfit font-semibold text-center rounded-md w-1/2 p-2 hover:bg-blackk hover:text-yelloww transform border-2 border-yelloww transition-transform duration-200 cursor-pointer" %>
-
     </div>
   </div>
+
+  <h2 class="text-5xl font-bold text-center font-outfit text-white mb-8"><%= @user.username %></h2>
+  <% if !@user.bio.blank? %>
+      <h3 class="text-2xl text-center font-outfit text-white mb-4"><%= @user.bio %></h3>
+  <% end %>
+
+  <% if !@user.soundcloud_link.blank? %>
+    <span class="text-2xl text-center font-bold text-yelloww">
+      <i class="fa-brands fa-soundcloud"></i>
+      <%= link_to "Soundcloud", @user.soundcloud_link %>
+    </span>
+  <% end %>
+
   <div class="flex flex-col justify-center items-center ml-6 mr-6 mb-24 gap-6">
     <div class="w-full flex flex-col mt-8 gap-4 pt-6 pb-6 shadow-lg p-2 md:w-1/2 bg-greyy border-2 border-yelloww rounded-lg mb-4 md:mb-0 p-8 " style="box-shadow: inset 0 0 5px 6px rgba(0, 0, 0, 0.35);">
       <div class="flex flex-col gap-4 ">
-        <h2 class="text-3xl text-center font-bold font-outfit text-yelloww">Your created drumracks</h2>
+        <h2 class="text-3xl text-center font-bold font-outfit text-yelloww">Drumracks</h2>
 
 
          <% @drumracks.each do |drumrack| %>
@@ -31,7 +50,7 @@
     <div class="w-full flex flex-col mt-8 gap-4 pbt-6 pb-6 shadow-lg shadow-black-500/50 p-8 md:w-1/2 bg-yelloww rounded-lg mb-4 md:mb-0 " style="box-shadow: inset 0 0 5px 6px rgba(0, 0, 0, 0.35);">
       <div class="flex flex-col items-center space-y-4">
         <h3 class="text-3xl text-center font-bold font-outfit text-black">
-          Your favorite drumracks
+          Favorites
         </h3>
         <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
         <dotlottie-player

@@ -1,8 +1,11 @@
 class UsersController < ApplicationController
+skip_before_action :authenticate_user!, only: [:index, :show]
+before_action :set_user, only: [:show]
+
   def show
-    @likes = current_user.likes
-    @drumracks = current_user.drumracks
-    @user = current_user
+    @likes = @user.likes
+    @current_user = current_user
+    @drumracks = @user.drumracks
   end
 
   def index
