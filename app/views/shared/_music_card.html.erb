@@ -38,12 +38,16 @@
             </p>
           <% end %>
         <% end %>
-
         <% if display_share_link %>
-          <%= link_to drumrack_path(drumrack), data: { turbo: false }, class: 'label control-button' do %>
-            <i class="text-white text-xl font-bold relative z-10 fa-solid fa-copy"></i>
-          <% end %>
+          <div data-controller="copy-drumrack-link"
+               data-action="click->copy-drumrack-link#copy"
+               data-copy-drumrack-link-url-value="<%= drumrack_url(drumrack) %>">
+            <%= link_to '#', data: { turbo: false }, class: 'label control-button' do %>
+              <i class="text-white text-xl font-bold relative z-10 fa-solid fa-copy"></i>
+            <% end %>
+          </div>
         <% end %>
+
       </div>
 
       <%= link_to user_path(drumrack.user), data: { turbo: false }, class: "text-white text-md relative z-10 text-center" do %>
