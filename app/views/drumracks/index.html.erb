@@ -19,7 +19,7 @@
     <div data-controller="search-drumracks-hp">
 
       <div class="flex flex-col items-center gap-8">
-        <%= form_with url: drumracks_path, method: :get, class: "w-full sm:w-auto" do %>
+        <%= form_with url: drumracks_path, method: :get, class: "w-full sm:w-auto", data: { turbo_frame: 'search_drumracks_results' } do %>
           <div class="flex gap-1 items-center w-full sm:w-auto">
             <%= text_field_tag :query,
                 params[:query],
@@ -37,15 +37,9 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center gap-4">
+      <%= turbo_frame_tag :search_drumracks_results do %>
         <%= render "shared/community", drumracks: @drumracks %>
-
-        <div class="mt-6">
-          <span class="text-xl font-outfit text-white my-4">
-            <%= will_paginate @posts %>
-          </span>
-        </div>
-      </div>
+      <% end %>
 
     </div>
 
