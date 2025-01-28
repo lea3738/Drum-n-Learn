@@ -25,6 +25,16 @@ class DrumracksController < ApplicationController
                            .group('drumracks.id')
                            .order('COUNT(likes.id) DESC')
                            .paginate(page: params[:page], per_page: 10)
+
+    # Respond with HTML for Turbo
+    respond_to do |format|
+      format.html do
+        if request.headers["Turbo-Frame"]
+          # Only render the partial for the Turbo Frame when requested via Turbo
+          render partial: "shared/community", locals: { drumracks: @drumracks }
+        end
+      end
+    end
   end
 
   def after_sign_up_path_for(resource)

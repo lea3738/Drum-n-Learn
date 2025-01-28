@@ -4,11 +4,12 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     console.log("Hello, Stimulus! search drumrack hp controller connected!");
-
   }
 
-  search(event){
-    const searchInput = event.target.value;
-    console.log("keyup action completed", searchInput);
+  search(event) {
+    const query = event.target.value;
+    // submit the form with the search query
+    // this.element is the form element
+    setTimeout(() => this.element.submit(), 300);
   }
 }
