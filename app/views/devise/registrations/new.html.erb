@@ -45,19 +45,19 @@
                     label_html: {
                                   class: "text-white font-outfit"
                                 } %>
-          <%= f.input :soundcloud_link,
-                    required: true,
+          <%= f.input :bio,
+                    required: false,
                     wrapper_html: {class: "w-full"},
-                    input_html: { autocomplete: "soundcloud_link",
+                    input_html: { autocomplete: "bio",
                                   class: "border border-slate-600 rounded-md p-2 flex flex-col gap-2 w-full focus:border-primary focus:outline-none",
                                 },
                     label_html: {
                                   class: "text-white font-outfit"
                                 } %>
-          <%= f.input :bio,
-                    required: true,
+          <%= f.input :soundcloud_link,
+                    required: false,
                     wrapper_html: {class: "w-full"},
-                    input_html: { autocomplete: "bio",
+                    input_html: { autocomplete: "soundcloud_link",
                                   class: "border border-slate-600 rounded-md p-2 flex flex-col gap-2 w-full focus:border-primary focus:outline-none",
                                 },
                     label_html: {
@@ -66,7 +66,7 @@
           <%= f.input :profile_picture,
                     required: true,
                     wrapper_html: {class: "w-full p-4 text-yelloww"},
-                    input_html: { autocomplete: "new-password",
+                    input_html: { autocomplete: "profile-picture",
                                   class: " p-2 flex flex-col gap-2  appearance-none",
                                 },
                     label_html: {

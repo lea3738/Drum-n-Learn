@@ -8,8 +8,7 @@ export default class extends Controller {
 
   search(event) {
     const query = event.target.value;
-    // submit the form with the search query
-    // this.element is the form element
+    console.log("Search query:", query);
     setTimeout(() => this.element.submit(), 300);
   }
 }
