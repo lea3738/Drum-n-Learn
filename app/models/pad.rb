@@ -10,8 +10,8 @@ class Pad < ApplicationRecord
   private
 
   def make_sure_pad_has_5_drumrack_samples
-    if drumrack_samples.size > 5
-      errors.add(:base, "must have 5 drumrack samples")
-    end
+    return if drumrack_samples.size <= 5
+
+    errors.add(:base, "must have 5 drumrack samples")
   end
 end

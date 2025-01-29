@@ -16,10 +16,10 @@ class User < ApplicationRecord
   end
 
   def check_image_attached
-    unless profile_picture.attached?
-      profile_picture.attach(io: File.open(Rails.root.join('app', 'assets', 'images', 'default-profile.jpg')),
-                             filename: 'default-profile.jpg',
-                             content_type: 'image/png')
-    end
+    return if profile_picture.attached?
+
+    profile_picture.attach(io: File.open(Rails.root.join('app', 'assets', 'images', 'default-profile.jpg')),
+                           filename: 'default-profile.jpg',
+                           content_type: 'image/png')
   end
 end

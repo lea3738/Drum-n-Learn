@@ -12,9 +12,11 @@ class LikesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to root_path }
-      format.turbo_stream { render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
-                                   partial: "shared/music_card",
-                                   locals: { drumrack: @drumrack }) }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
+               partial: "shared/music_card",
+               locals: { drumrack: @drumrack })
+      end
     end
   end
 
@@ -25,9 +27,11 @@ class LikesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to root_path }
-      format.turbo_stream { render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
-                                   partial: "shared/music_card",
-                                   locals: { drumrack: @drumrack }) }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
+               partial: "shared/music_card",
+               locals: { drumrack: @drumrack })
+      end
     end
   end
 end
