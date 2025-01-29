@@ -11,7 +11,7 @@ class LikesController < ApplicationController
     Rails.logger.debug "Drumrack: #{@drumrack.inspect}"
 
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { redirect_back(fallback_location: root_path) }
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
                partial: "shared/music_card",
@@ -26,7 +26,7 @@ class LikesController < ApplicationController
     @like.destroy
 
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { redirect_back(fallback_location: root_path) }
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
                partial: "shared/music_card",
