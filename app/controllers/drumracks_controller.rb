@@ -32,6 +32,8 @@ class DrumracksController < ApplicationController
         if request.headers["Turbo-Frame"]
           # Only render the partial for the Turbo Frame when requested via Turbo
           render partial: "shared/community", locals: { drumracks: @drumracks }
+        else
+          render :index
         end
       end
     end
