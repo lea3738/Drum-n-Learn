@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   resources :drumracks, only: [:index, :show, :update, :edit] do
     get :duplicate, on: :member
 
+    collection do
+      get :search
+    end
+
     resources :likes, only: [:new, :create]
 
     member do

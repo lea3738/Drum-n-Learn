@@ -9,25 +9,18 @@ export default class extends Controller {
   async search(event) {
     const query = event.target.value;
 
-    // Add a 300 millisecond delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500)); // debounce
 
-    const response = await fetch(`/drumracks?query=${query}`, {
-      headers: {
-        "Accept": "text/html"
-      }
+    const turboFrame = document.getElementById("drumracks_search_results");
+
+    const response = await fetch(`/drumracks/search?query=${query}`, {
+      headers: { "Accept": "text/html", "Turbo-Frame": turboFrame.id }
     });
 
     if (response.ok) {
-      const turboFrame = document.getElementById("drumracks_search_results");
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(await response.text(), "text/html");
-      const newContent = doc.getElementById("drumracks_search_results").innerHTML;
-      turboFrame.innerHTML = newContent;
-      console.log(turboFrame.innerHTML)
+      turboFrame.innerHTML = await response.text(); // Turbo will handle parsing
     } else {
-      const errorText = await response.text();
-      console.error("Failed to fetch drumracks:", response.status, errorText);
+      console.error("Search failed:", response.status);
     }
   }
 }

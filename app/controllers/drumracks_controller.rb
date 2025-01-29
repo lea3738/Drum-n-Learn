@@ -7,35 +7,19 @@ class DrumracksController < ApplicationController
 
   def index
     @templates = Drumrack.where(is_template: true)
-
     @drumracks = Drumrack.joins(:user)
                          .where(is_template: false)
+                         .left_joins(:likes)
+                         .group('drumracks.id')
+                         .order('COUNT(likes.id) DESC')
+                         .paginate(page: params[:page], per_page: 10)
+  end
 
-    if params[:query].present?
-      sql_subquery = <<~SQL
-        drumracks.genre @@ :query
-        OR users.username @@ :query
-        AND drumracks.is_template = false
-      SQL
-      @drumracks = @drumracks.where(sql_subquery, query: "%#{params[:query]}%")
-    end
+  def search
+    @drumracks = search_drumracks.paginate(page: params[:page], per_page: 10)
 
-    # sort by number of likes and add pagination
-    @drumracks = @drumracks.left_joins(:likes)
-                           .group('drumracks.id')
-                           .order('COUNT(likes.id) DESC')
-                           .paginate(page: params[:page], per_page: 10)
-
-    # Respond with HTML for Turbo
     respond_to do |format|
-      format.html do
-        if request.headers["Turbo-Frame"]
-          # Only render the partial for the Turbo Frame when requested via Turbo
-          render partial: "shared/community", locals: { drumracks: @drumracks }
-        else
-          render :index
-        end
-      end
+      format.html { render partial: "shared/community", locals: { drumracks: @drumracks } }
     end
   end
 
@@ -124,5 +108,20 @@ class DrumracksController < ApplicationController
 
   def drumrack_params
     params.require(:drumrack).permit(:name, :pads)
+  end
+
+  def search_drumracks
+    @drumracks = Drumrack.joins(:user).where(is_template: false)
+
+    if params[:query].present?
+      sql_subquery = <<~SQL
+        drumracks.genre @@ :query
+        OR users.username @@ :query
+        AND drumracks.is_template = false
+      SQL
+      @drumracks = @drumracks.where(sql_subquery, query: "%#{params[:query]}%")
+    end
+
+    @drumracks
   end
 end
