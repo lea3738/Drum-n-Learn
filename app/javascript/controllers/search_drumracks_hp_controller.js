@@ -11,16 +11,6 @@ export default class extends Controller {
 
     await new Promise(resolve => setTimeout(resolve, 500)); // debounce
 
-    const turboFrame = document.getElementById("drumracks_search_results");
-
-    const response = await fetch(`/drumracks/search?query=${query}`, {
-      headers: { "Accept": "text/html", "Turbo-Frame": turboFrame.id }
-    });
-
-    if (response.ok) {
-      turboFrame.innerHTML = await response.text(); // Turbo will handle parsing
-    } else {
-      console.error("Search failed:", response.status);
-    }
+    Turbo.visit(`/drumracks/search?query=${query}`, { frame: "drumracks_search_results" });
   }
 }
