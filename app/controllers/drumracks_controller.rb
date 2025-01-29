@@ -115,11 +115,11 @@ class DrumracksController < ApplicationController
 
     if params[:query].present?
       sql_subquery = <<~SQL
-        drumracks.genre @@ :query
-        OR users.username @@ :query
-        AND drumracks.is_template = false
+      drumracks.genre ILIKE :query
+      OR users.username ILIKE :query
+      AND drumracks.is_template = false
       SQL
-      @drumracks = @drumracks.where(sql_subquery, query: "%#{params[:query]}%")
+      @drumracks = @drumracks.where(sql_subquery, query: "#{params[:query]}%")
     end
 
     @drumracks

@@ -60,6 +60,7 @@ gem 'will_paginate', '~> 4.0'
 gem 'rubocop', '~> 1.71', require: false
 
 group :development, :test do
+  gem 'rspec-rails', '~> 7.0.0'
   gem "dotenv-rails"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
