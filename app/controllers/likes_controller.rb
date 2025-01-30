@@ -13,9 +13,15 @@ class LikesController < ApplicationController
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
-               partial: "shared/music_card",
-               locals: { drumrack: @drumrack, display_like_button: true, display_share_link: false })
+        render turbo_stream: turbo_stream.replace(
+          "drumrack_#{@drumrack.id}",
+          partial: "shared/music_card",
+          locals: {
+            drumrack: @drumrack,
+            display_like_button: true,
+            display_share_link: false
+          }
+        )
       end
     end
   end
@@ -28,9 +34,15 @@ class LikesController < ApplicationController
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}",
-               partial: "shared/music_card",
-               locals: { drumrack: @drumrack, display_like_button: true, display_share_link: false })
+        render turbo_stream: turbo_stream.replace(
+          "drumrack_#{@drumrack.id}",
+          partial: "shared/music_card",
+          locals: {
+            drumrack: @drumrack,
+            display_like_button: true,
+            display_share_link: false
+          }
+        )
       end
     end
   end

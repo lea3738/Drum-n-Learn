@@ -28,12 +28,18 @@
       <h3 class="text-2xl text-center font-outfit text-white mb-4"><%= @user.bio %></h3>
   <% end %>
 
-  <% if !@user.soundcloud_link.blank? %>
-    <span class="text-2xl text-center font-bold text-yelloww">
+  <div class="text-center">
+    <% if @user.soundcloud_link.present? %>
+    <%= link_to @user.soundcloud_link,
+                class: "inline-flex items-center gap-2 text-2xl text-yelloww hover:text-yellow-400 transition-colors duration-200",
+                target: "_blank",
+                rel: "noopener noreferrer",
+                title: "Visit #{@user.username}'s Soundcloud profile" do %>
       <i class="fa-brands fa-soundcloud"></i>
-      <%= link_to "Soundcloud", @user.soundcloud_link %>
-    </span>
+      <span class="font-bold">Soundcloud</span>
+    <% end %>
   <% end %>
+  </div>
 
   <div class="flex flex-col justify-center items-center ml-6 mr-6 mb-24 gap-6">
 

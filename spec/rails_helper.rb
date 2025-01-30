@@ -73,5 +73,4 @@ RSpec.configure do |config|
   config.before(:each) do
     ActiveStorage::Current.url_options = { host: 'http://localhost:3000' }
   end
-
 end

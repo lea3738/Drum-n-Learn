@@ -1,8 +1,6 @@
 require 'rails_helper'
 
-
 RSpec.describe "Drumracks", type: :request do
-
   # Load seed once at the beginning of the test suite
   before(:all) do
     Rails.application.load_seed
@@ -12,16 +10,13 @@ RSpec.describe "Drumracks", type: :request do
   let!(:user) { User.first }
 
   describe 'GET /drumracks' do
-
     it 'displays templates and drumracks' do
       get drumracks_path
       expect(response).to have_http_status(:success)
-
     end
   end
 
   describe 'GET /drumracks/:id' do
-
     it 'shows drumrack' do
       get drumrack_path(drumrack)
       expect(response).to have_http_status(:success)
@@ -45,9 +40,9 @@ RSpec.describe "Drumracks", type: :request do
     end
 
     it 'duplicates the drumrack' do
-      expect {
+      expect do
         get duplicate_drumrack_path(drumrack)
-      }.to change(Drumrack, :count).by(1)
+      end.to change(Drumrack, :count).by(1)
       expect(response).to redirect_to(soundbox_drumrack_path(Drumrack.last))
     end
 
@@ -58,7 +53,7 @@ RSpec.describe "Drumracks", type: :request do
       expect(new_drumrack.samples.count).to eq(drumrack.samples.count)
       expect(new_drumrack.pads.count).to eq(drumrack.pads.count)
       expect(new_drumrack.drumrack_samples.first.pad_drumrack_samples.where(active: true).count)
-      .to eq(drumrack.drumrack_samples.first.pad_drumrack_samples.where(active: true).count)
+        .to eq(drumrack.drumrack_samples.first.pad_drumrack_samples.where(active: true).count)
       expect(new_drumrack.user).to eq(user)
       expect(new_drumrack.is_template).to be false
     end

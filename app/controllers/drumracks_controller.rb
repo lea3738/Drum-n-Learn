@@ -84,7 +84,10 @@ class DrumracksController < ApplicationController
       next unless pad
 
       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
-        pad_sample_json = pad_json.is_a?(Array) ? pad_json.find { |l| l["category"] == pad_drumrack_sample.sample.category } : nil
+        pad_sample_json = nil
+        if pad_json.is_a?(Array)
+          pad_sample_json = pad_json.find { |l| l["category"] == pad_drumrack_sample.sample.category }
+        end
 
         if pad_sample_json
           pad_drumrack_sample.update(active: pad_sample_json["active"])
@@ -119,9 +122,9 @@ class DrumracksController < ApplicationController
 
     if params[:query].present?
       sql_subquery = <<~SQL
-      drumracks.genre ILIKE :query
-      OR users.username ILIKE :query
-      AND drumracks.is_template = false
+        drumracks.genre ILIKE :query
+        OR users.username ILIKE :query
+        AND drumracks.is_template = false
       SQL
       @drumracks = @drumracks.where(sql_subquery, query: "#{params[:query]}%")
     end
