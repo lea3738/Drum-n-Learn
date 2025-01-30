@@ -75,7 +75,6 @@ class DrumracksController < ApplicationController
 
   def update
     data = params[:pads]
-    raise
 
     @drumrack.update(name: params[:name], bpm: params[:bpm], user: current_user, is_template: false)
 

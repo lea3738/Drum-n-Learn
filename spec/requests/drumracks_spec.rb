@@ -4,9 +4,9 @@ require 'rails_helper'
 RSpec.describe "Drumracks", type: :request do
 
   # Load seed once at the beginning of the test suite
-  # before(:all) do
-  #   Rails.application.load_seed
-  # end
+  before(:all) do
+    Rails.application.load_seed
+  end
 
   let!(:drumrack) { Drumrack.first }
   let!(:user) { User.first }
@@ -63,31 +63,6 @@ RSpec.describe "Drumracks", type: :request do
       expect(new_drumrack.is_template).to be false
     end
   end
-
-  # describe 'PUT /drumracks/:id' do
-  #   let(:new_name) { 'Updated Drumrack' }
-  #   let(:new_bpm) { 120 }
-  #   let(:pad_data) { }
-  #   end
-
-  #   before do
-  #     sign_in user
-  #     create_sample_data(drumrack)
-  #   end
-
-  #   it 'updates the drumrack' do
-  #     put drumrack_path(drumrack), params: {
-  #       name: new_name,
-  #       bpm: new_bpm,
-  #       pads: pad_data
-  #     }, headers: { 'ACCEPT' => 'application/json' }
-
-  #     expect(response).to have_http_status(:success)
-  #     drumrack.reload
-  #     expect(drumrack.name).to eq(new_name)
-  #     expect(drumrack.bpm).to eq(new_bpm)
-  #   end
-  # end
 
   describe 'GET /drumracks/search' do
     before do
