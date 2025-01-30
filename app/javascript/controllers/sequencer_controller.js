@@ -14,6 +14,7 @@ export default class extends Controller {
   soundsPads = [];
 
   connect() {
+    console.log("sequencer connected")
     this.padTargets.forEach((pad) => {
       this.soundsPads.push({
         bass: new Audio(this.samplesValue["bass"]),

@@ -1,6 +1,7 @@
 class Drumrack < ApplicationRecord
   has_many :pads, dependent: :destroy
   has_many :drumrack_samples, dependent: :destroy
+  has_many :pad_drumrack_samples, through: :pads
   has_many :likes, dependent: :destroy
   has_many :samples, through: :drumrack_samples
   # we limit the number of associated drumrack_samples to 5

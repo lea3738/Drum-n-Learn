@@ -32,9 +32,9 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.include FactoryBot::Syntax::Methods
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
   ]
@@ -69,4 +69,9 @@ RSpec.configure do |config|
 
   # Include Devise test helpers for sign_in in controller/request specs
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  config.before(:each) do
+    ActiveStorage::Current.url_options = { host: 'http://localhost:3000' }
+  end
+
 end

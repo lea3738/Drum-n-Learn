@@ -33,13 +33,13 @@ class DrumracksController < ApplicationController
 
   def soundbox
     @samples_from_drumrack = @drumrack.samples.each_with_object({}) do |sample, hash|
-      hash[sample.category] = sample.sound.url
+      hash[sample.category] = Rails.application.routes.url_helpers.rails_blob_path(sample.sound, only_path: true)
     end.to_json
   end
 
   def show
     @samples_from_drumrack = @drumrack.samples.each_with_object({}) do |sample, hash|
-      hash[sample.category] = sample.sound.url
+      hash[sample.category] = Rails.application.routes.url_helpers.rails_blob_path(sample.sound, only_path: true)
     end.to_json
   end
 
@@ -61,8 +61,12 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.user = current_user
-    duplicated_drumrack.save
-    redirect_to soundbox_drumrack_path(duplicated_drumrack)
+    if duplicated_drumrack.save
+      redirect_to soundbox_drumrack_path(duplicated_drumrack)
+    else
+      # Handle failure
+      redirect_to drumrack_path(@drumrack), alert: 'Duplicate failed'
+    end
   end
 
   def edit
@@ -71,6 +75,7 @@ class DrumracksController < ApplicationController
 
   def update
     data = params[:pads]
+    raise
 
     @drumrack.update(name: params[:name], bpm: params[:bpm], user: current_user, is_template: false)
 

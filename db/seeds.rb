@@ -225,7 +225,7 @@ puts "Creating likes"
 User.all.each do |user|
   drumracks = Drumrack.all.where(is_template: false && drumrack.user != user)
   drumracks.each do |drumrack|
-    rand(5..10).times do
+    rand(3..5).times do
       user.likes.create(drumrack: drumrack)
     end
   end
