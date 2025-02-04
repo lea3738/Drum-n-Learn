@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
 
-  static values = { bpm: Number, samples: Object, initialSamples: String, bpmValue: Number, drumrackId: Number, genre: String };
+  static values = { bpm: Number, samples: Object, initialSamples: String, bpmValue: Number, drumrackId: Number, genre: String, name: String };
   static targets = ["pad", "category", "bpmLabel", "bpmInput", "togglePlayBtn", "togglePlayBtnShow", "bpmLabelCurrent", "popup", "name"];
 
   sampleSelected = null;
@@ -14,21 +14,19 @@ export default class extends Controller {
 
   soundsPads = [];
 
-
   connect() {
-    console.log("this is the sequencer controller version 1");
+    console.log("connected sequencer version 2")
     // creates an array of audio objects for each pad
-    const samplesAudioFiles = {
-      bass: new Audio(this.samplesValue["bass"]),
-      snare: new Audio(this.samplesValue["snare"]),
-      hihat: new Audio(this.samplesValue["hihat"]),
-      kick: new Audio(this.samplesValue["kick"]),
-      oneshot: new Audio(this.samplesValue["oneshot"]),
-    }
-    this.padTargets.forEach((pad) => {
-      this.soundsPads.push(samplesAudioFiles);
-    });
 
+    this.padTargets.forEach((pad) => {
+      this.soundsPads.push({
+        bass: new Audio(this.samplesValue["bass"]),
+        snare: new Audio(this.samplesValue["snare"]),
+        hihat: new Audio(this.samplesValue["hihat"]),
+        kick: new Audio(this.samplesValue["kick"]),
+        oneshot: new Audio(this.samplesValue["oneshot"]),
+      });
+    });
     this.soundBoxSamples = JSON.parse(this.initialSamplesValue).map(
       (padSamples) => {
         return padSamples.map((sample) => {
@@ -264,10 +262,21 @@ export default class extends Controller {
   }
 
   save() {
+    console.log("save");
     const name = this.nameTarget.value;
+    if (name !== this.nameValue) {
+      this.isDrumrackChanged = true;
+    };
+
+    console.log("name: ", name);
+    console.log("isDrumrackChanged: ", this.isDrumrackChanged);
+
     if (this.isDrumrackChanged) {
       const padsSamples = this.padTargets.map(pad => pad.dataset.samples)
+      console.log(padsSamples)
+      console.log("pad samples: ", padsSamples);
       const bpm = this.bpmValue;
+      console.log("bpm: ", bpm);
       fetch(`/drumracks/${this.drumrackIdValue}`, {
       method: "PATCH",
       body: JSON.stringify({
@@ -278,7 +287,7 @@ export default class extends Controller {
       headers: {
         "Content-type": "application/json; charset=UTF-8"
         }
-      });
+      })
       this.isDrumrackChanged = false;
     }
   }
