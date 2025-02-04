@@ -10,19 +10,25 @@ export default class extends Controller {
   lastPadPlayed = 0;
   interval = null;
   isDrumrackChanged = false;
+  // updated sequencer test
 
   soundsPads = [];
 
+
   connect() {
+    console.log("this is the sequencer controller version 1");
+    // creates an array of audio objects for each pad
+    const samplesAudioFiles = {
+      bass: new Audio(this.samplesValue["bass"]),
+      snare: new Audio(this.samplesValue["snare"]),
+      hihat: new Audio(this.samplesValue["hihat"]),
+      kick: new Audio(this.samplesValue["kick"]),
+      oneshot: new Audio(this.samplesValue["oneshot"]),
+    }
     this.padTargets.forEach((pad) => {
-      this.soundsPads.push({
-        bass: new Audio(this.samplesValue["bass"]),
-        snare: new Audio(this.samplesValue["snare"]),
-        hihat: new Audio(this.samplesValue["hihat"]),
-        kick: new Audio(this.samplesValue["kick"]),
-        oneshot: new Audio(this.samplesValue["oneshot"]),
-      });
+      this.soundsPads.push(samplesAudioFiles);
     });
+
     this.soundBoxSamples = JSON.parse(this.initialSamplesValue).map(
       (padSamples) => {
         return padSamples.map((sample) => {
@@ -42,10 +48,10 @@ export default class extends Controller {
       this.padTargets.forEach((pad) => {
         pad.dataset.active = "false";
         pad.dataset.played = "false";
-        // Fetches category targets but I cannot see that they exist
-        // this.categoryTargets.forEach((category) => {
-        //   category.dataset.played = "false";
-        // });
+        // Fetches categories = samples picker targets and sets them to played = false
+        this.categoryTargets.forEach((category) => {
+          category.dataset.played = "false";
+        });
       });
 
 
@@ -55,21 +61,26 @@ export default class extends Controller {
       pad.dataset.active = "true";
       // Gets the samples from the pad
       JSON.parse(pad.dataset.samples).forEach((sample) => {
-        console.log(this.categoryTargets)
+        // Find the sample picker (= category target) that matches the sample category
         const sampleButton = this.categoryTargets.find(
           (category) => category.dataset.category === sample.category
         );
-        console.log(sampleButton)
 
+        // If the pad sample is active and the sample button is not muted
         if (sample.active && sampleButton.dataset.muted !== "true") {
-          this.soundsPads[this.lastPadPlayed][sample.category].pause();
+          // Pause the sample of lastPadPlayed
+          // this.soundsPads[this.lastPadPlayed][sample.category].pause();
+          // Set the currentTime of the sample to 0
           this.soundsPads[this.lastPadPlayed][sample.category].currentTime = 0;
+          // Play the sample
           this.soundsPads[this.lastPadPlayed][sample.category].play();
+          // Set the pad to played
           pad.dataset.played = "true";
+          // Light up the sample picker
           this.lightUpPlayedSample(sample.category);
         }
       });
-
+      // Add 1 to lastPadPayed. if it's 15 it resets to 0
       this.lastPadPlayed === 15
         ? (this.lastPadPlayed = 0)
         : this.lastPadPlayed++;
