@@ -272,11 +272,8 @@ export default class extends Controller {
     console.log("isDrumrackChanged: ", this.isDrumrackChanged);
 
     if (this.isDrumrackChanged) {
-      const padsSamples = this.padTargets.map(pad => pad.dataset.samples)
-      console.log(padsSamples)
-      console.log("pad samples: ", padsSamples);
+      const padsSamples = this.padTargets.map(pad => pad.dataset.samples);
       const bpm = this.bpmValue;
-      console.log("bpm: ", bpm);
       fetch(`/drumracks/${this.drumrackIdValue}`, {
       method: "PATCH",
       body: JSON.stringify({
@@ -287,7 +284,11 @@ export default class extends Controller {
       headers: {
         "Content-type": "application/json; charset=UTF-8"
         }
-      })
+      }).then(response => {
+        if (response.ok) {
+          alert("Drumrack saved!");
+        }
+      });
       this.isDrumrackChanged = false;
     }
   }
