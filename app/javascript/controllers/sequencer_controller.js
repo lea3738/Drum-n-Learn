@@ -14,7 +14,6 @@ export default class extends Controller {
   soundsPads = [];
 
   connect() {
-    console.log("sequencer")
     this.padTargets.forEach((pad) => {
       this.soundsPads.push({
         bass: new Audio(this.samplesValue["bass"]),
@@ -38,22 +37,29 @@ export default class extends Controller {
 
   playMusic() {
     this.interval = setInterval(() => {
+
+      // Reset all pads to inactive and not played
       this.padTargets.forEach((pad) => {
         pad.dataset.active = "false";
         pad.dataset.played = "false";
-        this.categoryTargets.forEach((category) => {
-          category.dataset.played = "false";
-        });
+        // Fetches category targets but I cannot see that they exist
+        // this.categoryTargets.forEach((category) => {
+        //   category.dataset.played = "false";
+        // });
       });
-      const pad = document.querySelector(`#pad-${this.lastPadPlayed}`);
 
+
+      // Selects the pad to be played (starting from 0)
+      const pad = document.querySelector(`#pad-${this.lastPadPlayed}`);
+      // Set the pad to active
       pad.dataset.active = "true";
+      // Gets the samples from the pad
       JSON.parse(pad.dataset.samples).forEach((sample) => {
+        console.log(this.categoryTargets)
         const sampleButton = this.categoryTargets.find(
           (category) => category.dataset.category === sample.category
         );
-
-        console.log(sampleButton.dataset.muted);
+        console.log(sampleButton)
 
         if (sample.active && sampleButton.dataset.muted !== "true") {
           this.soundsPads[this.lastPadPlayed][sample.category].pause();
