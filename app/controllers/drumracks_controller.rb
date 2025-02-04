@@ -54,10 +54,11 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.pads.each_with_index do |pad, pad_index|
-      duplicated_drumrack_samples.each_with_index do |drumrack_sample, i|
-
-        active = @drumrack.pads[pad_index].pad_drumrack_samples[i].active
-        PadDrumrackSample.create(pad: pad, drumrack_sample: drumrack_sample, active: active)
+      duplicated_drumrack_samples.each_with_index do |duplicated_drumrack_sample, i|
+        isActive = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
+          pad_drumrack_sample.sample == duplicated_drumrack_sample.sample
+        end["active"]
+        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: isActive)
       end
     end
 
