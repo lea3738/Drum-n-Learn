@@ -54,11 +54,11 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.pads.each_with_index do |pad, pad_index|
-      duplicated_drumrack_samples.each_with_index do |duplicated_drumrack_sample, i|
-        isActive = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
+      duplicated_drumrack_samples.each do |duplicated_drumrack_sample|
+        is_active = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
           pad_drumrack_sample.sample == duplicated_drumrack_sample.sample
         end["active"]
-        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: isActive)
+        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: is_active)
       end
     end
 
@@ -90,10 +90,10 @@ class DrumracksController < ApplicationController
       next unless pad
 
       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
-        isActive = parsed_pad_json.find do |pad_sample_json|
+        is_active = parsed_pad_json.find do |pad_sample_json|
           pad_sample_json["category"] == pad_drumrack_sample.sample.category
         end["active"]
-        pad_drumrack_sample.update(active: isActive)
+        pad_drumrack_sample.update(active: is_active)
       end
     end
 

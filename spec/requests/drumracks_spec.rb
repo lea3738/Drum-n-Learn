@@ -59,6 +59,133 @@ RSpec.describe "Drumracks", type: :request do
     end
   end
 
+
+  describe 'PATCH /drumracks/:id' do
+    before do
+      sign_in user
+    end
+
+    let(:updated_name) { "Rspec Test Drumrack" }
+    let(:updated_bpm) { 100 }
+    let(:pads_data) {
+      [
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]"
+      ]
+    }
+
+    let(:valid_params) do
+      {
+        name: updated_name,
+        bpm: updated_bpm,
+        pads: pads_data
+      }
+    end
+
+    it "updates the drumrack attributes" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      expect(response).to have_http_status(:ok)
+      drumrack.reload
+      expect(drumrack.name).to eq(updated_name)
+      expect(drumrack.bpm).to eq(updated_bpm)
+      expect(drumrack.is_template).to be_falsey
+    end
+
+    it "updates pad_drumrack_samples' active status" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      drumrack.pads.each_with_index do |pad, index|
+        parsed_pad_json = JSON.parse(pads_data[index])
+
+        pad.pad_drumrack_samples.each do |pad_drumrack_sample|
+          expected_active = parsed_pad_json.find { |sample_json| sample_json["category"] == pad_drumrack_sample.sample.category }["active"]
+          expect(pad_drumrack_sample.reload.active).to eq(expected_active)
+        end
+      end
+    end
+
+    it "returns JSON success response" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)).to match("status" => "ok")
+    end
+  end
+
+
+
+
+
+############################
+# describe "PATCH /drumracks/:id" do
+#   let(:updated_name) { "Updated Drumrack" }
+#   let(:updated_bpm) { 120 }
+#   let(:pads_data) do
+#     pads.map do |pad|
+#       pad.pad_drumrack_samples.map do |pad_drumrack_sample|
+#         {
+#           "category" => pad_drumrack_sample.sample.category,
+#           "active" => [true, false].sample
+#         }
+#       end.to_json
+#     end
+#   end
+
+#   let(:valid_params) do
+#     {
+#       name: updated_name,
+#       bpm: updated_bpm,
+#       pads: pads_data
+#     }
+#   end
+
+#   it "updates the drumrack attributes" do
+#     patch drumrack_path(drumrack), params: valid_params, as: :json
+
+#     expect(response).to have_http_status(:ok)
+#     drumrack.reload
+#     expect(drumrack.name).to eq(updated_name)
+#     expect(drumrack.bpm).to eq(updated_bpm)
+#     expect(drumrack.is_template).to be_falsey
+#   end
+
+#   it "updates pad_drumrack_samples' active status" do
+#     patch drumrack_path(drumrack), params: valid_params, as: :json
+
+#     drumrack.pads.each_with_index do |pad, index|
+#       parsed_pad_json = JSON.parse(pads_data[index])
+
+#       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
+#         expected_active = parsed_pad_json.find { |sample_json| sample_json["category"] == pad_drumrack_sample.sample.category }["active"]
+#         expect(pad_drumrack_sample.reload.active).to eq(expected_active)
+#       end
+#     end
+#   end
+
+#   it "returns JSON success response" do
+#     patch drumrack_path(drumrack), params: valid_params, as: :json
+
+#     expect(response).to have_http_status(:ok)
+#     expect(response.body).to include_json(status: "ok")
+#   end
+# end
+############################
+
   describe 'GET /drumracks/search' do
     before do
       sign_in user
