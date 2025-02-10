@@ -6,9 +6,6 @@ export default class extends Controller {
     url: String
   }
 
-  connect() {
-  }
-
   copy(event) {
     event.preventDefault()
     navigator.clipboard.writeText(this.urlValue)

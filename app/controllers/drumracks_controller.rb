@@ -1,17 +1,15 @@
 require 'json'
 
 class DrumracksController < ApplicationController
-  skip_before_action :authenticate_user!, only: %i[index show templates]
+  skip_before_action :authenticate_user!, only: %i[index show templates search]
   skip_before_action :verify_authenticity_token
   before_action :set_drumrack, only: %i[show soundbox update duplicate]
 
   def index
-    @templates = Drumrack.where(is_template: true)
+    @templates = Drumrack.templates
     @drumracks = Drumrack.joins(:user)
-                         .where(is_template: false)
-                         .left_joins(:likes)
-                         .group('drumracks.id')
-                         .order('COUNT(likes.id) DESC')
+                         .user_drumracks
+                         .ordered_by_likes
                          .paginate(page: params[:page], per_page: 10)
   end
 
@@ -104,7 +102,7 @@ class DrumracksController < ApplicationController
   end
 
   def templates
-    @templates = Drumrack.where(is_template: true)
+    @templates = Drumrack.templates
   end
 
   private
@@ -118,7 +116,7 @@ class DrumracksController < ApplicationController
   end
 
   def search_drumracks
-    @drumracks = Drumrack.joins(:user).where(is_template: false)
+    @drumracks = Drumrack.joins(:user).user_drumracks
 
     if params[:query].present?
       sql_subquery = <<~SQL

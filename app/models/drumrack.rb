@@ -13,6 +13,11 @@ class Drumrack < ApplicationRecord
   belongs_to :user, optional: true
   after_create :create_pads
 
+  scope :templates, -> { where(is_template: true) }
+  scope :user_drumracks, -> { where(is_template: false) }
+  scope :ordered_by_likes, -> { left_joins(:likes).group('drumracks.id').order('COUNT(likes.id) DESC')}
+
+
   private
 
   def limit_number_of_associated_samples_to_five
