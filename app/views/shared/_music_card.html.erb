@@ -10,7 +10,6 @@
 
     <div class="flex justify-between w-full px-2">
       <div class="flex gap-2">
-        <% like = drumrack.likes.find_by(user: current_user) %>
         <% if display_like_button %>
           <% if current_user %>
             <% if !liked_by_current_user  %>
@@ -21,7 +20,7 @@
                 </p>
               <% end %>
             <% else %>
-              <%= button_to like_path(like),
+              <%= button_to like_path(drumrack.like_for(current_user)),
                   method: :delete,
                   data: {turbo_method: :delete},
                   class: "label control-button" do %>
