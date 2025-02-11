@@ -7,7 +7,6 @@ RSpec.describe "Drumracks", type: :request do
   end
 
   let!(:drumrack) { Drumrack.first }
-  let!(:user) { User.first }
 
   describe 'GET /drumracks' do
     it 'displays templates and drumracks' do
@@ -24,20 +23,22 @@ RSpec.describe "Drumracks", type: :request do
   end
 
   describe 'GET /drumracks/:id/soundbox' do
+    include_context 'with authenticated user'
+
+    # it 'shows the soundbox' do
+    #   get soundbox_drumrack_path(drumrack)
+    #   expect(response).to have_http_status(:success)
+    # end
+
     before do
-      sign_in user
+      get soundbox_drumrack_path(drumrack)
     end
 
-    it 'shows the soundbox' do
-      get soundbox_drumrack_path(drumrack)
-      expect(response).to have_http_status(:success)
-    end
+    it_behaves_like 'successful status'
   end
 
   describe 'GET /drumracks/:id/duplicate' do
-    before do
-      sign_in user
-    end
+    include_context 'with authenticated user'
 
     it 'duplicates the drumrack' do
       expect do
@@ -61,9 +62,7 @@ RSpec.describe "Drumracks", type: :request do
 
 
   describe 'PATCH /drumracks/:id' do
-    before do
-      sign_in user
-    end
+    include_context 'with authenticated user'
 
     let(:updated_name) { "Rspec Test Drumrack" }
     let(:updated_bpm) { 100 }
@@ -128,9 +127,7 @@ RSpec.describe "Drumracks", type: :request do
   end
 
   describe 'GET /drumracks/search' do
-    before do
-      sign_in user
-    end
+    include_context 'with authenticated user'
 
     it 'returns filtered results when query is present' do
       drumrack.genre = 'Rspec Test Hip Hop Drumrack'
