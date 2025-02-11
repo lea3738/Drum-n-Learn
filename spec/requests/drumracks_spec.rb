@@ -7,7 +7,6 @@ RSpec.describe "Drumracks", type: :request do
   end
 
   let!(:drumrack) { Drumrack.first }
-  let!(:user) { User.first }
 
   describe 'GET /drumracks' do
     it 'displays templates and drumracks' do
@@ -24,20 +23,22 @@ RSpec.describe "Drumracks", type: :request do
   end
 
   describe 'GET /drumracks/:id/soundbox' do
+    include_context 'with authenticated user'
+
+    # it 'shows the soundbox' do
+    #   get soundbox_drumrack_path(drumrack)
+    #   expect(response).to have_http_status(:success)
+    # end
+
     before do
-      sign_in user
+      get soundbox_drumrack_path(drumrack)
     end
 
-    it 'shows the soundbox' do
-      get soundbox_drumrack_path(drumrack)
-      expect(response).to have_http_status(:success)
-    end
+    it_behaves_like 'successful status'
   end
 
   describe 'GET /drumracks/:id/duplicate' do
-    before do
-      sign_in user
-    end
+    include_context 'with authenticated user'
 
     it 'duplicates the drumrack' do
       expect do
@@ -59,10 +60,74 @@ RSpec.describe "Drumracks", type: :request do
     end
   end
 
-  describe 'GET /drumracks/search' do
-    before do
-      sign_in user
+
+  describe 'PATCH /drumracks/:id' do
+    include_context 'with authenticated user'
+
+    let(:updated_name) { "Rspec Test Drumrack" }
+    let(:updated_bpm) { 100 }
+    let(:pads_data) {
+      [
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]",
+        "[{\"active\":true,\"category\":\"bass\"},{\"active\":false,\"category\":\"kick\"},{\"active\":false,\"category\":\"snare\"},{\"active\":false,\"category\":\"hihat\"},{\"active\":false,\"category\":\"oneshot\"}]"
+      ]
+    }
+
+    let(:valid_params) do
+      {
+        name: updated_name,
+        bpm: updated_bpm,
+        pads: pads_data
+      }
     end
+
+    it "updates the drumrack attributes" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      expect(response).to have_http_status(:ok)
+      drumrack.reload
+      expect(drumrack.name).to eq(updated_name)
+      expect(drumrack.bpm).to eq(updated_bpm)
+      expect(drumrack.is_template).to be_falsey
+    end
+
+    it "updates pad_drumrack_samples' active status" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      drumrack.pads.each_with_index do |pad, index|
+        parsed_pad_json = JSON.parse(pads_data[index])
+
+        pad.pad_drumrack_samples.each do |pad_drumrack_sample|
+          expected_active = parsed_pad_json.find { |sample_json| sample_json["category"] == pad_drumrack_sample.sample.category }["active"]
+          expect(pad_drumrack_sample.reload.active).to eq(expected_active)
+        end
+      end
+    end
+
+    it "returns JSON success response" do
+      patch drumrack_path(drumrack), params: valid_params, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)).to match("status" => "ok")
+    end
+  end
+
+  describe 'GET /drumracks/search' do
+    include_context 'with authenticated user'
 
     it 'returns filtered results when query is present' do
       drumrack.genre = 'Rspec Test Hip Hop Drumrack'

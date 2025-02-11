@@ -1,18 +1,17 @@
 require 'json'
 
 class DrumracksController < ApplicationController
-  skip_before_action :authenticate_user!, only: %i[index show templates]
+  skip_before_action :authenticate_user!, only: %i[index show templates search]
   skip_before_action :verify_authenticity_token
   before_action :set_drumrack, only: %i[show soundbox update duplicate]
 
   def index
-    @templates = Drumrack.where(is_template: true)
+    @templates = Drumrack.templates
     @drumracks = Drumrack.joins(:user)
-                         .where(is_template: false)
-                         .left_joins(:likes)
-                         .group('drumracks.id')
-                         .order('COUNT(likes.id) DESC')
+                         .user_drumracks
+                         .ordered_by_likes
                          .paginate(page: params[:page], per_page: 10)
+
   end
 
   def search
@@ -54,11 +53,11 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.pads.each_with_index do |pad, pad_index|
-      duplicated_drumrack_samples.each_with_index do |duplicated_drumrack_sample, i|
-        isActive = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
+      duplicated_drumrack_samples.each do |duplicated_drumrack_sample|
+        is_active = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
           pad_drumrack_sample.sample == duplicated_drumrack_sample.sample
         end["active"]
-        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: isActive)
+        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: is_active)
       end
     end
 
@@ -90,10 +89,10 @@ class DrumracksController < ApplicationController
       next unless pad
 
       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
-        isActive = parsed_pad_json.find do |pad_sample_json|
+        is_active = parsed_pad_json.find do |pad_sample_json|
           pad_sample_json["category"] == pad_drumrack_sample.sample.category
         end["active"]
-        pad_drumrack_sample.update(active: isActive)
+        pad_drumrack_sample.update(active: is_active)
       end
     end
 
@@ -104,7 +103,7 @@ class DrumracksController < ApplicationController
   end
 
   def templates
-    @templates = Drumrack.where(is_template: true)
+    @templates = Drumrack.templates
   end
 
   private
@@ -118,7 +117,7 @@ class DrumracksController < ApplicationController
   end
 
   def search_drumracks
-    @drumracks = Drumrack.joins(:user).where(is_template: false)
+    @drumracks = Drumrack.joins(:user).user_drumracks
 
     if params[:query].present?
       sql_subquery = <<~SQL

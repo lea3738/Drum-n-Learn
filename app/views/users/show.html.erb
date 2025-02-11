@@ -49,9 +49,9 @@
           Drumracks
         </h2>
       </div>
-      <% if @drumracks.present? %>
+      <% if @user_drumracks.present? %>
         <ul class="flex items-center justify-center flex-wrap gap-4">
-          <% @drumracks.each do |drumrack| %>
+          <% @user_drumracks.each do |drumrack| %>
             <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: true %>
           <% end %>
         </ul>
@@ -76,10 +76,10 @@
           autoplay
         ></dotlottie-player>
       </div>
-      <% if @likes.present? %>
+      <% if @user_liked_drumracks.present? %>
         <ul class="flex items-center justify-center flex-wrap gap-4">
-          <% @likes.each do |like| %>
-            <%= render "shared/music_card", drumrack: like.drumrack, display_like_button: false, display_share_link: false %>
+          <% @user_liked_drumracks.each do |drumrack| %>
+            <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: false %>
           <% end %>
         </ul>
       <% else %>
