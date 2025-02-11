@@ -18,7 +18,6 @@ class LikesController < ApplicationController
           partial: "shared/music_card",
           locals: {
             drumrack: @drumrack,
-            liked_by_current_user: true,
             display_like_button: true,
             display_share_link: false
           }
@@ -40,7 +39,6 @@ class LikesController < ApplicationController
           partial: "shared/music_card",
           locals: {
             drumrack: @drumrack,
-            liked_by_current_user: false,
             display_like_button: true,
             display_share_link: false
           }

@@ -52,7 +52,7 @@
       <% if @user_drumracks.present? %>
         <ul class="flex items-center justify-center flex-wrap gap-4">
           <% @user_drumracks.each do |drumrack| %>
-            <%= render "shared/music_card", drumrack: drumrack, liked_by_current_user: drumrack.liked_by?(current_user), display_like_button: true, display_share_link: true %>
+            <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: true %>
           <% end %>
         </ul>
       <% else %>
@@ -79,7 +79,7 @@
       <% if @user_liked_drumracks.present? %>
         <ul class="flex items-center justify-center flex-wrap gap-4">
           <% @user_liked_drumracks.each do |drumrack| %>
-            <%= render "shared/music_card", drumrack: drumrack, liked_by_current_user: drumrack.liked_by?(current_user), display_like_button: true, display_share_link: false %>
+            <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: false %>
           <% end %>
         </ul>
       <% else %>
