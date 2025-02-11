@@ -15,6 +15,7 @@ class User < ApplicationRecord
 
   has_many :likes, dependent: :destroy
   has_many :drumracks
+  has_many :liked_drumracks, through: :likes, source: :drumrack
   has_one_attached :profile_picture
   before_create :check_image_attached
 

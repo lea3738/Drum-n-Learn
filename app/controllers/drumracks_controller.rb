@@ -11,6 +11,7 @@ class DrumracksController < ApplicationController
                          .user_drumracks
                          .ordered_by_likes
                          .paginate(page: params[:page], per_page: 10)
+
   end
 
   def search

@@ -3,9 +3,9 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show]
 
   def show
-    @likes = @user.likes
     @current_user = current_user
-    @drumracks = @user.drumracks
+    @user_liked_drumracks = @user.liked_drumracks
+    @user_drumracks = @user.drumracks
   end
 
   def index

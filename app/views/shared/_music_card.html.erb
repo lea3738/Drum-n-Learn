@@ -13,7 +13,7 @@
         <% like = drumrack.likes.find_by(user: current_user) %>
         <% if display_like_button %>
           <% if current_user %>
-            <% if like.nil?  %>
+            <% if !liked_by_current_user  %>
               <%= button_to drumrack_likes_path(drumrack), class: 'label control-button' do %>
                 <p class="text-white text-md relative z-10 text-center cursor-pointer">
                 <i class="fa-solid fa-heart-pulse text-xl text-white"></i>

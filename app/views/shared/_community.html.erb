@@ -3,7 +3,7 @@
   <div class="flex flex-col items-center gap-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-12 w-full">
       <% drumracks.each do |drumrack| %>
-        <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: false %>
+        <%= render "shared/music_card", drumrack: drumrack, liked_by_current_user: drumrack.liked_by?(current_user), display_like_button: true, display_share_link: false %>
       <% end %>
     </div>
     <div class="mt-6">

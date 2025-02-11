@@ -17,6 +17,10 @@ class Drumrack < ApplicationRecord
   scope :user_drumracks, -> { where(is_template: false) }
   scope :ordered_by_likes, -> { left_joins(:likes).group('drumracks.id').order('COUNT(likes.id) DESC')}
 
+  def liked_by?(user)
+    user.present? && likes.exists?(user: user)
+  end
+
 
   private
 
