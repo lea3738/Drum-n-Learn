@@ -54,9 +54,11 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.pads.each_with_index do |pad, pad_index|
-      duplicated_drumrack_samples.each_with_index do |drumrack_sample, i|
-        active = @drumrack.pads[pad_index].pad_drumrack_samples[i].active
-        PadDrumrackSample.create(pad: pad, drumrack_sample: drumrack_sample, active: active)
+      duplicated_drumrack_samples.each_with_index do |duplicated_drumrack_sample, i|
+        isActive = @drumrack.pads[pad_index].pad_drumrack_samples.find do |pad_drumrack_sample|
+          pad_drumrack_sample.sample == duplicated_drumrack_sample.sample
+        end["active"]
+        PadDrumrackSample.create(pad: pad, drumrack_sample: duplicated_drumrack_sample, active: isActive)
       end
     end
 
@@ -75,25 +77,23 @@ class DrumracksController < ApplicationController
 
   def update
     data = params[:pads]
+    Rails.logger.debug "Received pads: #{data.inspect}"
 
     @drumrack.update(name: params[:name], bpm: params[:bpm], user: current_user, is_template: false)
 
+    # for each pad in the data
     data.each_with_index do |pad_json, index|
-      pad_json = JSON.parse(pad_json)
+      # parse the data pad json
+      parsed_pad_json = JSON.parse(pad_json)
+      # get the corresponding pad in the drumrack
       pad = @drumrack.pads[index]
       next unless pad
 
       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
-        pad_sample_json = nil
-        if pad_json.is_a?(Array)
-          pad_sample_json = pad_json.find { |l| l["category"] == pad_drumrack_sample.sample.category }
-        end
-
-        if pad_sample_json
-          pad_drumrack_sample.update(active: pad_sample_json["active"])
-        else
-          Rails.logger.warn "Aucune correspondance trouvée pour la catégorie #{pad_drumrack_sample.sample.category}"
-        end
+        isActive = parsed_pad_json.find do |pad_sample_json|
+          pad_sample_json["category"] == pad_drumrack_sample.sample.category
+        end["active"]
+        pad_drumrack_sample.update(active: isActive)
       end
     end
 

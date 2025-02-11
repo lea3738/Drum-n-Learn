@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
 
-  static values = { bpm: Number, samples: Object, initialSamples: String, bpmValue: Number, drumrackId: Number, genre: String };
+  static values = { bpm: Number, samples: Object, initialSamples: String, bpmValue: Number, drumrackId: Number, genre: String, name: String };
   static targets = ["pad", "category", "bpmLabel", "bpmInput", "togglePlayBtn", "togglePlayBtnShow", "bpmLabelCurrent", "popup", "name"];
 
   sampleSelected = null;
@@ -10,11 +10,14 @@ export default class extends Controller {
   lastPadPlayed = 0;
   interval = null;
   isDrumrackChanged = false;
+  // updated sequencer test
 
   soundsPads = [];
 
   connect() {
-    console.log("sequencer")
+    console.log("connected sequencer version 2")
+    // creates an array of audio objects for each pad
+
     this.padTargets.forEach((pad) => {
       this.soundsPads.push({
         bass: new Audio(this.samplesValue["bass"]),
@@ -38,32 +41,44 @@ export default class extends Controller {
 
   playMusic() {
     this.interval = setInterval(() => {
+
+      // Reset all pads to inactive and not played
       this.padTargets.forEach((pad) => {
         pad.dataset.active = "false";
         pad.dataset.played = "false";
+        // Fetches categories = samples picker targets and sets them to played = false
         this.categoryTargets.forEach((category) => {
           category.dataset.played = "false";
         });
       });
-      const pad = document.querySelector(`#pad-${this.lastPadPlayed}`);
 
+
+      // Selects the pad to be played (starting from 0)
+      const pad = document.querySelector(`#pad-${this.lastPadPlayed}`);
+      // Set the pad to active
       pad.dataset.active = "true";
+      // Gets the samples from the pad
       JSON.parse(pad.dataset.samples).forEach((sample) => {
+        // Find the sample picker (= category target) that matches the sample category
         const sampleButton = this.categoryTargets.find(
           (category) => category.dataset.category === sample.category
         );
 
-        console.log(sampleButton.dataset.muted);
-
+        // If the pad sample is active and the sample button is not muted
         if (sample.active && sampleButton.dataset.muted !== "true") {
-          this.soundsPads[this.lastPadPlayed][sample.category].pause();
+          // Pause the sample of lastPadPlayed
+          // this.soundsPads[this.lastPadPlayed][sample.category].pause();
+          // Set the currentTime of the sample to 0
           this.soundsPads[this.lastPadPlayed][sample.category].currentTime = 0;
+          // Play the sample
           this.soundsPads[this.lastPadPlayed][sample.category].play();
+          // Set the pad to played
           pad.dataset.played = "true";
+          // Light up the sample picker
           this.lightUpPlayedSample(sample.category);
         }
       });
-
+      // Add 1 to lastPadPayed. if it's 15 it resets to 0
       this.lastPadPlayed === 15
         ? (this.lastPadPlayed = 0)
         : this.lastPadPlayed++;
@@ -247,9 +262,17 @@ export default class extends Controller {
   }
 
   save() {
+    console.log("save");
     const name = this.nameTarget.value;
+    if (name !== this.nameValue) {
+      this.isDrumrackChanged = true;
+    };
+
+    console.log("name: ", name);
+    console.log("isDrumrackChanged: ", this.isDrumrackChanged);
+
     if (this.isDrumrackChanged) {
-      const padsSamples = this.padTargets.map(pad => pad.dataset.samples)
+      const padsSamples = this.padTargets.map(pad => pad.dataset.samples);
       const bpm = this.bpmValue;
       fetch(`/drumracks/${this.drumrackIdValue}`, {
       method: "PATCH",
@@ -260,6 +283,10 @@ export default class extends Controller {
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
+        }
+      }).then(response => {
+        if (response.ok) {
+          alert("Drumrack saved!");
         }
       });
       this.isDrumrackChanged = false;

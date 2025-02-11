@@ -10,6 +10,7 @@
   <div data-controller="sequencer"
       data-is-landscape="false"
       data-sequencer-samples-value="<%= @samples_from_drumrack %>"
+      data-sequencer-name-value="<%= @drumrack.name %>"
       data-sequencer-genre-value="<%= @drumrack.genre %>"
       data-sequencer-bpm-value="<%= @drumrack.bpm.to_i %>"
       data-sequencer-initial-samples-value="<%= @drumrack.pads.map { |pad| pad.pad_drumrack_samples.map { |pad_drumrack_sample| {active: pad_drumrack_sample.active, category: pad_drumrack_sample.sample.category}.to_json } } %>"
