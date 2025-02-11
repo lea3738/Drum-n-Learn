@@ -2,8 +2,8 @@
 
 <%= render "shared/header" %>
 
-<div class="flex flex-col items-center h-screen px-4 py-2 gap-4 relative z-10">
-  <div class="flex flex-col items-center h-screen px-4 py-8 gap-12">
+<div class="flex flex-col items-center px-4 py-2 gap-4 relative z-10">
+  <div class="flex flex-col items-center px-4 py-8 gap-12">
     <div class="flex flex-col items-center gap-4">
       <h2 class="text-3xl font-outfit font-bold text-white">What's your inspiration today ?</h2>
       <p class="text-xl font-outfit text-white">Find your favorite music genre and let the magic begin with one of our templates !</p>
@@ -15,28 +15,32 @@
     <%= render "shared/cards" %>
 
     <h2 class="text-3xl font-outfit font-bold text-yelloww">Or</h2>
-    <div class="flex flex-col items-center gap-8">
-      <%= form_with url: drumracks_path, method: :get, class: "w-full sm:w-auto" do %>
-      <div class="flex gap-1 items-center w-full sm:w-auto">
-        <%= text_field_tag :query,
-              params[:query],
-              class: "mt-2 h-12 px-4 py-2 rounded border-2 border-yelloww font-gillSans shadow-md w-full sm:w-72" ,
-              placeholder: "Search genre or user..."
-        %>
-        <%= submit_tag "Search", name: "",
-              class: "mt-2 h-12 bg-yelloww font-semibold hover:bg-blackk hover:text-yelloww text-lg text-blackk px-4 py-2 rounded font-outfit shadow-md w-full sm:w-auto sm:h-full sm:px-6 sm:py-2 transition-colors duration-300 border-2 border-yelloww"
-        %>
-      </div>
-      <% end %>
-      <div class="flex flex-col items-center">
-        <p class="text-xl font-outfit text-white">Browse on drumracks made by our community !</p>
-      </div>
 
+    <div class="flex flex-col items-center">
+      <%= form_with url: drumracks_path, method: :get, class: "w-full sm:w-auto", data: { turbo_frame: 'drumracks_search_results', controller:'search-drumracks-hp' } do %>
+        <div class="flex items-center w-full sm:w-auto mb-4">
+          <%= text_field_tag :query,
+              params[:query],
+              class: "mt-2 h-12 px-4 py-2 rounded border-2 border-yelloww font-gillSans shadow-md w-full sm:w-72",
+              placeholder: "Search genre or user...",
+              data: { "action": "keyup->search-drumracks-hp#search" }
+          %>
+        </div>
+      <% end %>
+      <div class="flex flex-col items-center mb-8">
+        <p class="text-xl font-outfit text-white">Browse DrumnLearn community music !</p>
+      </div>
     </div>
-    <%= render "shared/community", drumracks: @drumracks %>
-      <%= render "shared/footer" %>
+
+    <%= turbo_frame_tag :drumracks_search_results do %>
+      <%= render "shared/community", drumracks: @drumracks %>
+    <% end %>
+
   </div>
+
+  <%= render "shared/footer" %>
 </div>
+
 
 
 <%= render "drumracks/blur_neons" %>

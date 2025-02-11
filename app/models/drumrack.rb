@@ -1,10 +1,11 @@
 class Drumrack < ApplicationRecord
   has_many :pads, dependent: :destroy
   has_many :drumrack_samples, dependent: :destroy
+  has_many :pad_drumrack_samples, through: :pads
   has_many :likes, dependent: :destroy
   has_many :samples, through: :drumrack_samples
   # we limit the number of associated drumrack_samples to 5
-  validate :limit_number_of_associated_samples_to_5
+  validate :limit_number_of_associated_samples_to_five
   validate :limit_associated_samples_to_one_per_category
   validates :name, presence: true
   validates :genre, presence: true
@@ -14,17 +15,17 @@ class Drumrack < ApplicationRecord
 
   private
 
-  def limit_number_of_associated_samples_to_5
-    if samples.size > 5
-      errors.add(:base, "can't be more than 5")
-    end
+  def limit_number_of_associated_samples_to_five
+    return if samples.size <= 5
+
+    errors.add(:base, "can't be more than 5")
   end
 
   def limit_associated_samples_to_one_per_category
     categories = samples.map(&:category)
-    if categories.size != categories.uniq.size
-      errors.add(:base, "can't have more than one sample per category")
-    end
+    return if categories.size == categories.uniq.size
+
+    errors.add(:base, "can't have more than one sample per category")
   end
 
   def create_pads
@@ -34,5 +35,4 @@ class Drumrack < ApplicationRecord
       pad.save
     end
   end
-
 end

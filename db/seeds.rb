@@ -188,7 +188,7 @@ end
 
 puts "Creating users"
 # Create a user
-5.times do
+3.times do
   user = User.new(username: Faker::Name.unique.name, email: Faker::Internet.email, password: Faker::Internet.password)
   user.profile_picture.attach(io: URI.open(Faker::Avatar.image), filename: "avatar.png", content_type: "image/png")
 
@@ -223,9 +223,9 @@ end
 puts "Creating likes"
 
 User.all.each do |user|
-  drumracks = Drumrack.all
+  drumracks = Drumrack.all.where(is_template: false && drumrack.user != user)
   drumracks.each do |drumrack|
-    rand(10..150).times do
+    rand(3..5).times do
       user.likes.create(drumrack: drumrack)
     end
   end

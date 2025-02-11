@@ -1,5 +1,4 @@
 class LikesController < ApplicationController
-
   def new
     @drumrack = Drumrack.find(params[:drumrack_id])
     @like = Like.new
@@ -7,13 +6,23 @@ class LikesController < ApplicationController
 
   def create
     @drumrack = Drumrack.find(params[:drumrack_id])
-    @like = Like.new(drumrack:@drumrack , user:current_user).save
+    @like = Like.new(drumrack: @drumrack, user: current_user).save
 
     Rails.logger.debug "Drumrack: #{@drumrack.inspect}"
 
     respond_to do |format|
-      format.html {redirect_to root_path}
-      format.turbo_stream { render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}", partial: "shared/music_card", locals: { drumrack: @drumrack }) }
+      format.html { redirect_back(fallback_location: root_path) }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "drumrack_#{@drumrack.id}",
+          partial: "shared/music_card",
+          locals: {
+            drumrack: @drumrack,
+            display_like_button: true,
+            display_share_link: false
+          }
+        )
+      end
     end
   end
 
@@ -23,8 +32,18 @@ class LikesController < ApplicationController
     @like.destroy
 
     respond_to do |format|
-      format.html {redirect_to root_path}
-      format.turbo_stream { render turbo_stream: turbo_stream.replace("drumrack_#{@drumrack.id}", partial: "shared/music_card", locals: { drumrack: @drumrack }) }
+      format.html { redirect_back(fallback_location: root_path) }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "drumrack_#{@drumrack.id}",
+          partial: "shared/music_card",
+          locals: {
+            drumrack: @drumrack,
+            display_like_button: true,
+            display_share_link: false
+          }
+        )
+      end
     end
   end
 end

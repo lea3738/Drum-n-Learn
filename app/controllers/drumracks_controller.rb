@@ -1,25 +1,26 @@
 require 'json'
 
 class DrumracksController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show, :templates]
+  skip_before_action :authenticate_user!, only: %i[index show templates]
   skip_before_action :verify_authenticity_token
-  before_action :set_drumrack, only: [:show, :soundbox, :update, :duplicate]
+  before_action :set_drumrack, only: %i[show soundbox update duplicate]
 
   def index
     @templates = Drumrack.where(is_template: true)
     @drumracks = Drumrack.joins(:user)
                          .where(is_template: false)
+                         .left_joins(:likes)
+                         .group('drumracks.id')
+                         .order('COUNT(likes.id) DESC')
+                         .paginate(page: params[:page], per_page: 10)
+  end
 
-    if params[:query].present?
-      sql_subquery = <<~SQL
-        drumracks.genre @@ :query
-        OR users.username @@ :query
-        AND drumracks.is_template = false
-      SQL
-      @drumracks = @drumracks.where(sql_subquery, query: "%#{params[:query]}%")
+  def search
+    @drumracks = search_drumracks.paginate(page: params[:page], per_page: 10)
+
+    respond_to do |format|
+      format.html { render partial: "shared/community", locals: { drumracks: @drumracks } }
     end
-
-    @drumracks = @drumracks.sort_by { |drumrack| drumrack.likes.count }.reverse
   end
 
   def after_sign_up_path_for(resource)
@@ -27,18 +28,18 @@ class DrumracksController < ApplicationController
   end
 
   def after_sign_in_path_for(resource)
-    root_path
+    user_path(resource)
   end
 
   def soundbox
     @samples_from_drumrack = @drumrack.samples.each_with_object({}) do |sample, hash|
-      hash[sample.category] = sample.sound.url
+      hash[sample.category] = Rails.application.routes.url_helpers.rails_blob_path(sample.sound, only_path: true)
     end.to_json
   end
 
   def show
     @samples_from_drumrack = @drumrack.samples.each_with_object({}) do |sample, hash|
-      hash[sample.category] = sample.sound.url
+      hash[sample.category] = Rails.application.routes.url_helpers.rails_blob_path(sample.sound, only_path: true)
     end.to_json
   end
 
@@ -60,8 +61,12 @@ class DrumracksController < ApplicationController
     end
 
     duplicated_drumrack.user = current_user
-    duplicated_drumrack.save
-    redirect_to soundbox_drumrack_path(duplicated_drumrack)
+    if duplicated_drumrack.save
+      redirect_to soundbox_drumrack_path(duplicated_drumrack)
+    else
+      # Handle failure
+      redirect_to drumrack_path(@drumrack), alert: 'Duplicate failed'
+    end
   end
 
   def edit
@@ -79,7 +84,10 @@ class DrumracksController < ApplicationController
       next unless pad
 
       pad.pad_drumrack_samples.each do |pad_drumrack_sample|
-        pad_sample_json = pad_json.is_a?(Array) ? pad_json.find { |l| l["category"] == pad_drumrack_sample.sample.category } : nil
+        pad_sample_json = nil
+        if pad_json.is_a?(Array)
+          pad_sample_json = pad_json.find { |l| l["category"] == pad_drumrack_sample.sample.category }
+        end
 
         if pad_sample_json
           pad_drumrack_sample.update(active: pad_sample_json["active"])
@@ -107,5 +115,20 @@ class DrumracksController < ApplicationController
 
   def drumrack_params
     params.require(:drumrack).permit(:name, :pads)
+  end
+
+  def search_drumracks
+    @drumracks = Drumrack.joins(:user).where(is_template: false)
+
+    if params[:query].present?
+      sql_subquery = <<~SQL
+        drumracks.genre ILIKE :query
+        OR users.username ILIKE :query
+        AND drumracks.is_template = false
+      SQL
+      @drumracks = @drumracks.where(sql_subquery, query: "#{params[:query]}%")
+    end
+
+    @drumracks
   end
 end

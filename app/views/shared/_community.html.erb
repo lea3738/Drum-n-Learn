@@ -1,5 +1,16 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-12 w-full">
-  <% drumracks.each do |drumrack| %>
-    <%= render "shared/music_card", drumrack: drumrack, display_like_button: true %>
-  <% end %>
-</div>
+<%= turbo_frame_tag :drumracks_search_results do %>
+
+  <div class="flex flex-col items-center gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-12 w-full">
+      <% drumracks.each do |drumrack| %>
+        <%= render "shared/music_card", drumrack: drumrack, display_like_button: true, display_share_link: false %>
+      <% end %>
+    </div>
+    <div class="mt-6">
+      <span class="text-xl font-outfit text-white my-4">
+        <%= will_paginate @posts %>
+      </span>
+    </div>
+  </div>
+
+<% end %>

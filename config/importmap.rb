@@ -14,3 +14,4 @@ pin "@babel/runtime/helpers/slicedToArray", to: "@babel--runtime--helpers--slice
 pin "automation-events" # @7.1.4
 pin "standardized-audio-context" # @25.3.77
 pin "tslib" # @2.8.1
+pin "stimulus" # @3.2.2
